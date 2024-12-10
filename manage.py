@@ -1,22 +1,12 @@
-#!/usr/bin/env python
-"""Django's command-line utility for administrative tasks."""
 import os
-import sys
+from django.core.wsgi import get_wsgi_application
+from django.core.asgi import get_asgi_application
 
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'your_project.settings')
 
-def main():
-    """Run administrative tasks."""
-    os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'myproj.settings')
-    try:
-        from django.core.management import execute_from_command_line
-    except ImportError as exc:
-        raise ImportError(
-            "Couldn't import Django. Are you sure it's installed and "
-            "available on your PYTHONPATH environment variable? Did you "
-            "forget to activate a virtual environment?"
-        ) from exc
-    execute_from_command_line(sys.argv)
-
-
-if __name__ == '__main__':
-    main()
+# This checks if the app is running in the Vercel environment
+if os.environ.get('VERCEL'):
+    from . import app  # Import your app to be used as the handler
+    handler = app  # Set 'app' as the handler for Vercel
+else:
+    application = get_wsgi_application()  # For local or other environments, use the default WSGI application
